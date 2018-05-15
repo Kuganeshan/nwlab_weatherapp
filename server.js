@@ -11,6 +11,18 @@ hbs.registerPartials(__dirname + '/views/partials');
 server.get('/', (req,res) => {
   res.render('main.hbs');
 });
+
+server.get('/main', (req,res) => {
+  res.render('main.hbs');
+});
+
+server.post('/form',(req,res)=> {
+  res.render('form.hbs');
+});
+
+server.get('/results',(req,res)=> {
+  res.render('results.hbs');
+});
 server.post('/getweather', (req, res) => {
   const addr = req.body.address;
 
@@ -28,13 +40,13 @@ server.post('/getweather', (req, res) => {
     const weatherReq = `https://api.darksky.net/forecast/3212c4fbdaa96a2aa80206cd67ee6ec1/${lat},${lng}`;
     return axios.get(weatherReq);
   }).then((response) => {
-    res.send(
-    {
+
+    res.render('results.hbs', {
       address: addr,
       summary: response.data.currently.summary,
       temperature: (response.data.currently.temperature -32) * 0.5556,
-    }
-  );
+
+    });
     console.log(response.data.currently.summary);
     const temp = (response.data.currently.temperature - 32) * 0.5556;
     const temperature = temp.toFixed(2);
