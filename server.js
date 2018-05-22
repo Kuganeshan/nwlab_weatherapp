@@ -3,6 +3,7 @@ const server = express();
 const hbs = require('hbs');
 const axios = require ('axios');
 const bodyParser =require('body-parser');
+const filemgr =require('./filemgr');
 
 server.use(bodyParser.urlencoded({extended: true}));
 server.set('view engine', 'hbs');
@@ -23,6 +24,16 @@ server.post('/form',(req,res)=> {
 server.get('/results',(req,res)=> {
   res.render('results.hbs');
 });
+
+server.get('/historical',(req,res)=> {
+  filemgr.getAllData().then((result) => {
+    res.render('historical.hbs');
+  }).catch((errorMessage) => {
+    console.log(errorMessage);
+  });
+});
+
+
 server.post('/getweather', (req, res) => {
   const addr = req.body.address;
 
@@ -41,16 +52,24 @@ server.post('/getweather', (req, res) => {
     return axios.get(weatherReq);
   }).then((response) => {
 
-    res.render('results.hbs', {
-      address: addr,
-      summary: response.data.currently.summary,
-      temperature: (response.data.currently.temperature -32) * 0.5556,
-
-    });
     console.log(response.data.currently.summary);
     const temp = (response.data.currently.temperature - 32) * 0.5556;
     const temperature = temp.toFixed(2);
-    console.log(`${temp} Celsius`);
+    const tempString = `${temperature} Celsius`;
+
+    const weatherresult = {
+      address: addr,
+      summary: response.data.currently.summary,
+      temperature: tempString,
+
+    };
+
+filemgr.saveData(weatherresult).then((result) => {
+  res.render('results.hbs', weatherresult);
+  }).catch((errorMessage) => {
+    console.log(errorMessage);
+
+  });
 
   })
   .catch((error)  => {

@@ -1,38 +1,54 @@
 const {MongoClient}= require('mongodb');
+const fs = MongoClient;
 
-// MongoClient.connect('mongodb://localhost:27017', {useNewUrlParser: true}, (err, client) => {
-//   if (err) {
-//   return console.log('Unableto connect to MongoDB');
-// }
-// console.log('Connected to MongoDB');
-// const db = client.db('WeatherApp');
-//
-// db.collection('weatherCollection').insertOne({
-//   address: 'Inti College',
-//   summary: 'Cool and Windy',
-//   temperature: '22 C',
-// }, (err, result) => {
-//    if (err) {
-//      return cosole.log('Unable to insert');
-//    }
-//    console.log(result);
-// })
-//
-// client.close();
-// });
+const database = 'mongodb://localhost:27017';
 
-MongoClient.connect('mongodb://localhost:27017', {useNewUrlParser: true}, (err, client) => {
-  if (err) {
-  return console.log('Unableto connect to MongoDB');
+const saveData = (newdata) => {
+  return new Promise((resolve, reject) => {
+    MongoClient.connect(database, {useNewUrlParser: true}, (err, client) => {
+      if (err) {
+      reject('Unableto connect to MongoDB');
+    }
+    console.log('Connected to MongoDB');
+    const db = client.db('WeatherApp');
+
+    db.collection('weatherCollection').insertOne(newdata,(err, result) => {
+       if (err) {
+         reject('Unable to insert');
+       }
+       resolve(result);
+    })
+
+    client.close();
+    });
+  });
+};
+
+
+const getAllData = () => {
+  return new Promise((resolve, reject) =>{
+    MongoClient.connect('mongodb://localhost:27017', {useNewUrlParser: true}, (err, client) => {
+      if (err) {
+      reject('Unableto connect to MongoDB');
+    }
+    console.log('Connected to MongoDB');
+    const db = client.db('WeatherApp');
+
+    db.collection('weatherCollection').find().toArray().then((docs) => {
+    resolve(JSON.stringify(docs));
+    }, (err) => {
+      reject('Unable to fetch docs');
+    });
+
+    client.close();
+    });
+
+  });
 }
-console.log('Connected to MongoDB');
-const db = client.db('WeatherApp');
 
-db.collection('weatherCollection').find().toArray().then((docs) => {
-console.log(JSON.stringify(docs));
-}, (err) => {
-  console.log('Unable to fetch docs');
-});
 
-client.close();
-});
+
+module.exports = {
+  saveData,
+  getAllData,
+}
