@@ -5,6 +5,8 @@ const axios = require ('axios');
 const bodyParser =require('body-parser');
 const filemgr =require('./filemgr');
 
+const port = process.env.PORT || 3000;
+
 server.use(bodyParser.urlencoded({extended: true}));
 server.set('view engine', 'hbs');
 hbs.registerPartials(__dirname + '/views/partials');
@@ -116,6 +118,6 @@ server.get('/form', (req, res) => {
     //currentdate: new Date().toDateString(),
   });
 
-server.listen(3000, () => {
-  console.log("Server listening on port 3000");
+server.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
 });
