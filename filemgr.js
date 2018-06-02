@@ -7,7 +7,7 @@ const saveData = (newdata) => {
   return new Promise((resolve, reject) => {
     MongoClient.connect(database, {useNewUrlParser: true}, (err, client) => {
       if (err) {
-      reject('Unableto connect to MongoDB');
+      reject('Unable to connect to MongoDB');
     }
     console.log('Connected to MongoDB');
     const db = client.db('WeatherApp');
@@ -27,9 +27,9 @@ const saveData = (newdata) => {
 
 const getAllData = () => {
   return new Promise((resolve, reject) =>{
-    MongoClient.connect('mongodb://localhost:27017', {useNewUrlParser: true}, (err, client) => {
+    MongoClient.connect(database, {useNewUrlParser: true}, (err, client) => {
       if (err) {
-      reject('Unableto connect to MongoDB');
+      reject('Unable to connect to MongoDB');
     }
     console.log('Connected to MongoDB');
     const db = client.db('WeatherApp');
@@ -47,7 +47,7 @@ const getAllData = () => {
 };
 const deleteAll = () => {
   return new Promise((resolve, reject) =>{
-    MongoClient.connect('mongodb://localhost:27017', {useNewUrlParser: true}, (err, client) => {
+    MongoClient.connect(database, {useNewUrlParser: true}, (err, client) => {
       if (err) {
       reject('Unableto connect to MongoDB');
     }
